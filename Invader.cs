@@ -1,0 +1,46 @@
+using System;
+using UnityEngine;
+
+public class Invader : MonoBehaviour
+{
+    public Sprite[] animationsSprites;
+
+    public float animationTime = 1.0f;
+
+    public Action killed;
+
+    private SpriteRenderer _spriteRenderer;
+
+    private int _animationFrame;
+
+    private void Awake()
+    {
+        _spriteRenderer = GetComponent<SpriteRenderer>();
+    }
+
+    private void Start()
+    {
+        InvokeRepeating(nameof(AnimateSprite), this.animationTime, this.animationTime);
+    }
+
+    private void AnimateSprite()
+    {
+        _animationFrame++;
+
+        if (_animationFrame > this.animationsSprites.Length)
+        {
+            _animationFrame = 0;
+        }
+
+        _spriteRenderer.sprite = this.animationsSprites[_animationFrame];
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.layer == LayerMask.NameToLayer("Laser"))
+        {
+            this.killed.Invoke();
+            this.gameObject.SetActive(false);
+        }
+    }
+}
